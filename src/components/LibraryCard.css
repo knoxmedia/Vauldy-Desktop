@@ -1,0 +1,55 @@
+.library-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+}
+
+.library-card-cover {
+  position: relative;
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.library-card-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.library-card-badge {
+  position: relative;
+  margin: var(--spacing-sm);
+  background: var(--overlay);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.library-card-meta {
+  padding: var(--spacing-md);
+}
+
+.library-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.library-card-count {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
