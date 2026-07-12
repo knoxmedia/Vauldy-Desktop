@@ -1,4 +1,5 @@
 /// Place platform-specific mpv binaries here for Tauri sidecar bundling.
+/// Path is relative to `src-tauri/` (this folder: `src-tauri/bin/`).
 ///
 /// Tauri expects files named with target triple suffix, for example:
 /// - `mpv-x86_64-pc-windows-msvc.exe` (Windows x64)

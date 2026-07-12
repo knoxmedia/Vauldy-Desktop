@@ -46,10 +46,27 @@ Place platform binaries under `bin/` (see `bin/README.md`). Tauri bundles them a
 ## Build installers
 
 ```bash
+# Current platform (Windows / Linux / macOS)
 npm run tauri:build
+
+# Windows helper script (downloads mpv sidecar + builds)
+.\build.ps1
 ```
 
-Produces platform packages under `src-tauri/target/release/bundle/`.
+Produces:
+- Executable: `src-tauri/target/release/vauldy-desktop(.exe)`
+- Bundled installers: `src-tauri/target/release/bundle/`
+- Collected artifacts: `dist/desktop/<target-triple>/`
+
+### All platforms
+
+Cross-compilation requires native OS toolchains. Use GitHub Actions:
+
+```bash
+gh workflow run desktop-build.yml
+```
+
+Downloads artifacts for Windows x64, Linux x64, macOS Intel and Apple Silicon.
 
 ## Project layout
 
