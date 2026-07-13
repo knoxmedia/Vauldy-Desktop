@@ -112,12 +112,52 @@ export function mediaReleaseYear(
   return match ? match[0] : "";
 }
 
-export function resolvePlaybackUrl(plan: {
-  hls_master?: string;
-  fallback?: string;
-  mode?: string;
-}, mediaId: number): string {
+export function resolvePlaybackUrl(
+  plan: {
+    playUrl?: string;
+    hls_master?: string;
+    fallback?: string;
+    mode?: string;
+  },
+  mediaId: number,
+  opts?: { preferDirect?: boolean },
+): string {
+  const mode = (plan.mode || "").trim().toLowerCase();
+  if (mode === "native" && plan.playUrl) {
+    return withAccessToken(plan.playUrl);
+  }
+
+  const hlsModes = new Set(["hls", "hls_drm", "hls_aes_128", "hls_powerdrm", "jit_hls"]);
+  const preferDirect = opts?.preferDirect ?? false;
+
+  if (preferDirect) {
+    if (plan.playUrl) return withAccessToken(plan.playUrl);
+    if (plan.fallback) return withAccessToken(plan.fallback);
+  }
+  if (plan.hls_master && hlsModes.has(mode)) {
+    return withAccessToken(plan.hls_master);
+  }
+  if (plan.playUrl) return withAccessToken(plan.playUrl);
   if (plan.hls_master) return withAccessToken(plan.hls_master);
   if (plan.fallback) return withAccessToken(plan.fallback);
+  return mediaPlaySrc(mediaId);
+}
+
+/** mpv 优先源文件直链，不走 jit_hls / 预转码 HLS */
+export function resolveMpvPlaybackUrl(
+  plan: {
+    playUrl?: string;
+    hls_master?: string;
+    fallback?: string;
+    mode?: string;
+  } | null | undefined,
+  mediaId: number,
+): string {
+  const mode = (plan?.mode || "").trim().toLowerCase();
+  if (mode === "hls_drm" || mode === "hls_powerdrm") {
+    return resolvePlaybackUrl(plan!, mediaId);
+  }
+  if (plan?.playUrl) return withAccessToken(plan.playUrl);
+  if (plan?.fallback) return withAccessToken(plan.fallback);
   return mediaPlaySrc(mediaId);
 }

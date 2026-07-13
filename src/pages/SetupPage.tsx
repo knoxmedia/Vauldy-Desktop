@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { checkHealth, fetchBranding } from "@/api/client";
 import { normalizeServerUrl, useConfigStore } from "@/store/config";
 
 export default function SetupPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const serverUrl = useConfigStore((s) => s.serverUrl);
   const setServerUrl = useConfigStore((s) => s.setServerUrl);
@@ -28,7 +26,7 @@ export default function SetupPage() {
       setAppName(branding.app_name);
       setOk(true);
     } catch {
-      setError(t("setup.failed"));
+      setError("无法连接服务器，请检查地址与网络");
       setServerUrl(null);
     } finally {
       setLoading(false);
@@ -42,13 +40,13 @@ export default function SetupPage() {
   return (
     <div className="page-center">
       <div className="auth-card">
-        <h1 className="auth-title">{t("setup.title")}</h1>
-        <p className="auth-hint">{t("setup.hint")}</p>
+        <h1 className="auth-title">连接服务器</h1>
+        <p className="auth-hint">请输入 Vauldy 服务端地址（与 Web 端相同）。</p>
         {error ? <div className="alert alert-error">{error}</div> : null}
-        {ok ? <div className="alert alert-success">{t("setup.success")}</div> : null}
+        {ok ? <div className="alert alert-success">连接成功</div> : null}
         <div className="form-field">
           <label className="form-label" htmlFor="server-url">
-            {t("setup.server_url")}
+            服务器地址
           </label>
           <input
             id="server-url"
@@ -59,7 +57,7 @@ export default function SetupPage() {
           />
         </div>
         <button type="button" className="btn btn-secondary btn-block" disabled={loading} onClick={() => void testConnection()}>
-          {t("setup.test")}
+          测试连接
         </button>
         <button
           type="button"
@@ -68,7 +66,7 @@ export default function SetupPage() {
           disabled={!ok || loading}
           onClick={onContinue}
         >
-          {t("setup.continue")}
+          继续
         </button>
       </div>
     </div>

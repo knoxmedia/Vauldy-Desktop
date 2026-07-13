@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { fetchUserInfo, login } from "@/api/client";
+import { useT } from "@/i18n";
+import { useAppName } from "@/store/branding";
 import { useAuthStore } from "@/store/auth";
-import { initI18n } from "@/i18n";
 
 export default function LoginPage() {
-  const { t, i18n } = useTranslation();
+  const t = useT();
+  const appName = useAppName();
   const navigate = useNavigate();
   const setToken = useAuthStore((s) => s.setToken);
   const setProfile = useAuthStore((s) => s.setProfile);
@@ -28,11 +29,9 @@ export default function LoginPage() {
         avatarUrl: info.avatar_url,
         uiLocale: info.ui_locale,
       });
-      initI18n(info.ui_locale);
-      void i18n.changeLanguage(info.ui_locale?.startsWith("en") ? "en" : "zh-CN");
       navigate("/", { replace: true });
     } catch {
-      setError(t("login.failed"));
+      setError(t("login.failure"));
       useAuthStore.getState().clearSession();
     } finally {
       setLoading(false);
@@ -42,7 +41,7 @@ export default function LoginPage() {
   return (
     <div className="page-center">
       <form className="auth-card" onSubmit={(e) => void onSubmit(e)}>
-        <h1 className="auth-title">{t("login.title")}</h1>
+        <h1 className="auth-title">{t("login.title", { appName })}</h1>
         {error ? <div className="alert alert-error">{error}</div> : null}
         <div className="form-field">
           <label className="form-label" htmlFor="username">

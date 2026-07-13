@@ -77,6 +77,7 @@ export type BrandingInfo = {
 export type PlaybackPlan = {
   status?: string;
   mode?: string;
+  playUrl?: string;
   hls_master?: string;
   fallback?: string;
   session_id?: string;
@@ -112,4 +113,5 @@ export type MpvStatus = {
   position: number;
   duration: number;
   volume: number;
+  hovering: boolean;
 };
