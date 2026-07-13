@@ -4,6 +4,7 @@ mod mpv_ipc;
 
 use mpv::{MpvBounds, MpvController, MpvStatus};
 use tauri::{
+    image::Image,
     include_image,
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -126,11 +127,33 @@ fn quit_app(app: &AppHandle) {
     app.exit(0);
 }
 
+/// Load app icon from disk in dev (picks up `tauri icon` without re-embed) or bundled default.
+fn load_app_icon(app: &AppHandle) -> Image<'static> {
+    #[cfg(debug_assertions)]
+    {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("icons/icon.png");
+        if let Ok(icon) = Image::from_path(&path) {
+            return icon;
+        }
+    }
+    if let Some(icon) = app.default_window_icon() {
+        return icon.clone().to_owned();
+    }
+    include_image!("icons/icon.png")
+}
+
+fn apply_window_icon(app: &AppHandle) {
+    let icon = load_app_icon(app);
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.set_icon(icon);
+    }
+}
+
 fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let show = MenuItem::with_id(app, "show", "显示主窗口", true, None::<&str>)?;
     let quit = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&show, &quit])?;
-    let icon = include_image!("icons/32x32.png");
+    let icon = load_app_icon(app);
 
     let _tray = TrayIconBuilder::with_id("main-tray")
         .icon(icon)
@@ -188,6 +211,7 @@ pub fn run() {
             hide_to_tray,
         ])
         .setup(|app| {
+            apply_window_icon(app.handle());
             setup_tray(app.handle())?;
             if let Err(err) = embed_window::configure_transparent_host(app.handle()) {
                 eprintln!("[mpv-embed] transparent host setup failed: {err}");

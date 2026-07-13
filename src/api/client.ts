@@ -657,15 +657,15 @@ export async function updateDocumentMeta(
 export function documentCoverSrc(id: number, token?: string | null): string {
   const base = `/api/v1/media/${id}/document/cover.jpg`;
   const t = token ?? useAuthStore.getState().token;
-  if (t) return `${base}?access_token=${encodeURIComponent(t)}`;
-  return base;
+  const path = t ? `${base}?access_token=${encodeURIComponent(t)}` : base;
+  return serverAssetUrl(path);
 }
 
 export function documentStreamSrc(id: number, token?: string | null): string {
   const base = `/api/v1/media/${id}/play`;
   const t = token ?? useAuthStore.getState().token;
-  if (t) return `${base}?access_token=${encodeURIComponent(t)}`;
-  return base;
+  const path = t ? `${base}?access_token=${encodeURIComponent(t)}` : base;
+  return serverAssetUrl(path);
 }
 
 export function documentDownloadSrc(id: number, token?: string | null): string {
@@ -676,8 +676,8 @@ export function documentDownloadSrc(id: number, token?: string | null): string {
 export function documentPreviewSrc(id: number, token?: string | null): string {
   const base = `/api/v1/media/${id}/document/preview.pdf`;
   const t = token ?? useAuthStore.getState().token;
-  if (t) return `${base}?access_token=${encodeURIComponent(t)}`;
-  return base;
+  const path = t ? `${base}?access_token=${encodeURIComponent(t)}` : base;
+  return serverAssetUrl(path);
 }
 
 export const OFFICE_DOCUMENT_FORMATS = new Set(["doc", "docx", "xls", "xlsx", "ppt", "pptx"]);
